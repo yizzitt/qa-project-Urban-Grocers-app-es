@@ -1,5 +1,21 @@
-.pytest/
+# Entornos virtuales
+.venv/
 venv/
-.idea/
-.pytest_cache/
+
+# Python
 __pycache__/
+*.py[cod]
+
+# Pytest
+.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
+
+# Variables de entorno y credenciales
+.env
+.env.*
+
+# Reportes locales
+reports/
