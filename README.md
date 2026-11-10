@@ -1,73 +1,48 @@
-# Urban Grocers API Testing
+# Urban Grocers API Automation Testing
 
-Proyecto de automatización de pruebas para validar el funcionamiento
-del endpoint de creación de kits de la API Urban Grocers.
+### Automated API Testing | Python | Pytest | Requests
 
-El objetivo es verificar que la API procese correctamente las
-solicitudes y aplique las reglas de validación establecidas
-para el campo `name`.
+![Python](https://img.shields.io/badge/Python-3.15-blue)
+![Pytest](https://img.shields.io/badge/Pytest-9.2.0-green)
+![Requests](https://img.shields.io/badge/Requests-HTTP-orange)
+![Testing](https://img.shields.io/badge/Testing-API-purple)
 
-## Tecnologías utilizadas
+## Project Overview
 
-- Python 3.15
-- Pytest 9.2.0
+This project focuses on automated API testing of the
+Urban Grocers application, specifically validating
+the kit creation functionality.
+
+The main objective is to verify API behavior,
+validate request and response data, and identify
+potential defects according to the documented
+business requirements.
+
+## Technologies
+
+- Python
+- Pytest
 - Requests
+- REST API
 - JSON
-- API REST
-- Pytest HTML Report
+- Git & GitHub
+- Pytest HTML
 
-## Funcionalidades probadas
+## Testing Scope
 
-Endpoint:
+**Endpoint:** `POST /api/v1/kits`
 
-`POST /api/v1/kits`
+The automated test suite covers:
 
-Se realizaron pruebas para validar:
+- Kit creation with valid names.
+- Empty name validation.
+- Invalid characters.
+- Numeric characters.
+- Underscores and special characters.
+- HTTP response status validation.
+- Response body verification.
 
-- Creación de kits con nombres válidos.
-- Validación de nombres vacíos.
-- Validación de caracteres no permitidos.
-- Validación de nombres que contienen números.
-- Respuestas HTTP de la API.
-- Contenido de las respuestas JSON.
-
-## Casos de prueba
-
-Se implementaron 9 pruebas automatizadas:
-
-| Categoría | Casos |
-|---|---:|
-| Pruebas positivas | 4 |
-| Pruebas negativas | 5 |
-| Total | 9 |
-
-## Resultados de ejecución
-
-Última ejecución:
-
-| Resultado | Cantidad |
-|---|---:|
-| PASSED | 4 |
-| FAILED | 5 |
-| Total | 9 |
-
-Las pruebas positivas confirmaron que la API permite
-crear kits con nombres válidos.
-
-Las pruebas negativas identificaron un incumplimiento
-en la validación del campo `name`: la API devuelve
-HTTP 201 Created cuando se esperaba HTTP 400 Bad Request.
-
-## Defecto identificado
-
-**BUG-001: Validación incorrecta del nombre del kit.**
-
-La API permite crear kits con nombres que incumplen
-las reglas de validación documentadas.
-
-El defecto se encuentra documentado en `BUG_REPORT.md`.
-
-## Estructura del proyecto
+## Project Structure
 
 ```text
 qa-project-Urban-Grocers-app-es/
@@ -79,9 +54,4 @@ qa-project-Urban-Grocers-app-es/
 ├── conftest.py
 ├── BUG_REPORT.md
 ├── README.md
-├── .gitignore
-│
-├── reports/
-│   └── reporte_pruebas.html
-│
-└── .venv/
+└── .gitignore
