@@ -36,35 +36,40 @@ The test suite uses Python, Pytest, and Requests to automate positive and negati
     |-- BUG_REPORT.md
     |-- README.md
     |-- .gitignore
-    |
     |-- reports/ (generated locally, not tracked by Git)
 
 ## Testing Scope
 
 **Endpoint:** `POST /api/v1/kits`
 
-The automated test suite covers the following scenarios:
+The automated test suite covers nine test scenarios based on the project requirements.
 
 ### Positive Testing
 
-- Kit creation with valid names.
-- Names containing spaces.
-- Names containing hyphens.
-- Single-word names.
+The following scenarios are expected to return HTTP 201 Created:
+
+1. Kit name containing one character.
+2. Kit name containing 511 characters.
+3. Kit name containing special characters (`№%@`).
+4. Kit name containing leading and trailing spaces.
+5. Kit name containing numeric characters as a string (`123`).
 
 ### Negative Testing
 
-- Empty names.
-- Names containing numbers.
-- Names containing underscores.
-- Names containing special characters.
-- Numeric-only names.
+The following scenarios are expected to return HTTP 400 Bad Request:
+
+1. Empty kit name.
+2. Kit name exceeding the 511-character limit.
+3. Missing `name` parameter.
+4. Numeric value instead of a string for the `name` parameter.
 
 ### Response Validation
 
 - HTTP status code verification.
 - Response body validation.
 - Returned kit name verification.
+- Positive and negative response handling.
+- JSON request body validation.
 
 ## Test Execution
 
@@ -99,27 +104,36 @@ The HTML report is generated locally and excluded from version control.
 
 ## Test Results
 
-**Latest execution: November 10, 2026**
+**Latest execution: November 12, 2026**
 
 | Metric | Result |
 |---|---:|
 | Total test cases | 9 |
-| Passed | 4 |
-| Failed | 5 |
+| Passed | 5 |
+| Failed | 4 |
+| Positive scenarios | 5 |
+| Negative scenarios | 4 |
 
 ### Defect Identified
 
-**BUG-001: Invalid kit names are accepted by the API.**
+**BUG-001: API does not correctly validate invalid kit creation requests.**
 
-- Expected result: HTTP 400 Bad Request.
-- Actual result: HTTP 201 Created.
-- Affected scenarios: 5 negative test cases.
+The four negative scenarios returned unexpected HTTP status codes:
 
-The API accepts inputs that do not comply with the documented naming requirements.
+| Scenario | Expected Result | Actual Result |
+|---|---|---|
+| Empty name | HTTP 400 | HTTP 201 |
+| 512-character name | HTTP 400 | HTTP 201 |
+| Missing name parameter | HTTP 400 | HTTP 500 |
+| Numeric name type | HTTP 400 | HTTP 201 |
+
+All five positive test scenarios passed.
+
+Four negative test scenarios failed because the API returned unexpected HTTP status codes.
 
 The defect is documented in `BUG_REPORT.md`.
 
-The failed tests represent an API behavior issue identified during testing, not an automation framework configuration error.
+The failed tests represent API behavior issues identified during testing, not automation framework configuration errors.
 
 ## QA Skills Demonstrated
 
@@ -129,6 +143,7 @@ The failed tests represent an API behavior issue identified during testing, not 
 - Test parametrization.
 - Pytest fixtures.
 - HTTP request handling.
+- JSON request validation.
 - Response validation.
 - Defect identification and documentation.
 - HTML test reporting.

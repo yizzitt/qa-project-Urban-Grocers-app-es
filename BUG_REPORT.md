@@ -1,100 +1,123 @@
 # BUG REPORT
 ## Urban Grocers API Testing
 
-**Proyecto:** Urban Grocers API  
-**Módulo:** Creación de kits  
-**Endpoint:** POST /api/v1/kits  
-**ID del defecto:** BUG-001  
-**Severidad:** Major  
-**Prioridad:** High  
-**Estado:** Open  
-**Reportado por:** Freddy Ramirez  
-**Tipo de prueba:** API Testing  
+**Project:** Urban Grocers API
+**Module:** Kit Creation
+**Endpoint:** POST /api/v1/kits
+**Bug ID:** BUG-001
+**Severity:** Major
+**Priority:** High
+**Status:** Open
+**Reported by:** Freddy Ramirez
+**Test type:** API Testing
+**Report date:** November 12, 2026
 
 ---
 
-### 1. Título
+### 1. Title
 
-La API permite crear kits con nombres que incumplen las reglas de validación.
+The API does not correctly validate invalid kit creation requests.
 
-### 2. Descripción
+### 2. Description
 
-Al realizar solicitudes POST al endpoint `/api/v1/kits`,
-la API permite crear kits utilizando nombres que contienen
-caracteres no permitidos o que están vacíos.
+When sending POST requests to `/api/v1/kits`, the API
+does not consistently validate the `name` parameter
+according to the official project requirements.
 
-De acuerdo con la documentación, el nombre debe contener
-únicamente letras latinas, espacios y guiones.
+During automated testing, four invalid input scenarios
+produced unexpected HTTP responses.
 
-Sin embargo, la API responde HTTP 201 Created ante
-los cinco valores negativos probados.
+Three requests were accepted with HTTP 201 Created,
+while a request without the required `name` parameter
+returned HTTP 500 Internal Server Error.
 
-### 3. Precondiciones
+The expected response for all four scenarios is
+HTTP 400 Bad Request.
 
-- Disponer de acceso a la API Urban Grocers.
-- Crear un usuario mediante el endpoint correspondiente.
-- Obtener un authToken válido.
-- Utilizar el token para realizar la solicitud de creación del kit.
+### 3. Preconditions
 
-### 4. Pasos para reproducir
+- Have access to the Urban Grocers API.
+- Create a new user through the corresponding endpoint.
+- Obtain a valid authToken.
+- Use the token to authorize kit creation requests.
 
-1. Crear un usuario nuevo.
-2. Obtener su authToken.
-3. Enviar una solicitud POST a `/api/v1/kits`.
-4. Incluir en el cuerpo JSON un nombre que incumpla
-   las reglas de validación.
-5. Revisar el código de estado de la respuesta.
+### 4. Steps to Reproduce
 
-### 5. Datos de prueba
+1. Create a new user.
+2. Obtain the user's authToken.
+3. Send a POST request to `/api/v1/kits`.
+4. Include one of the invalid JSON payloads listed below.
+5. Review the HTTP status code returned by the API.
+6. Compare the actual response with the expected result.
 
-| Caso | Nombre enviado | Resultado esperado |
-|---|---|---|
-| 1 | "" | HTTP 400 |
-| 2 | "Kit123" | HTTP 400 |
-| 3 | "Kit_name" | HTTP 400 |
-| 4 | "Kit @#$%" | HTTP 400 |
-| 5 | "123456" | HTTP 400 |
+### 5. Test Data and Results
 
-### 6. Resultado esperado
+| Case | Request Body | Expected Result | Actual Result |
+|---|---|---|---|
+| 1 | `{"name": ""}` | HTTP 400 | HTTP 201 |
+| 2 | `{"name": "A" * 512}` | HTTP 400 | HTTP 201 |
+| 3 | `{}` | HTTP 400 | HTTP 500 |
+| 4 | `{"name": 123}` | HTTP 400 | HTTP 201 |
 
-La API debe rechazar los nombres que no cumplan
-las reglas de validación y responder:
+### 6. Expected Result
+
+The API must validate the request body according to
+the project requirements.
+
+For all four invalid scenarios, the API must reject
+the request and return:
 
 HTTP 400 Bad Request.
 
-### 7. Resultado actual
+### 7. Actual Result
 
-La API acepta los cinco valores negativos y responde:
+The API returns unexpected HTTP responses:
 
-HTTP 201 Created.
+- Empty name: HTTP 201 Created.
+- Name exceeding 511 characters: HTTP 201 Created.
+- Missing `name` parameter: HTTP 500 Internal Server Error.
+- Numeric value instead of a string: HTTP 201 Created.
 
-Esto permite crear kits con nombres que incumplen
-las reglas documentadas.
+The API therefore does not handle these invalid
+requests according to the expected behavior.
 
-### 8. Evidencia
+### 8. Test Evidence
 
-Ejecución automatizada mediante Pytest:
+Automated execution using Python and Pytest.
 
-- Total de pruebas: 9
-- Pruebas aprobadas: 4
-- Pruebas fallidas: 5
+**Latest execution:** November 12, 2026
 
-Los cinco casos negativos recibieron HTTP 201
-en lugar del HTTP 400 esperado.
+| Metric | Result |
+|---|---:|
+| Total test cases | 9 |
+| Passed | 5 |
+| Failed | 4 |
+| Positive scenarios | 5 |
+| Negative scenarios | 4 |
 
-### 9. Impacto
+All five positive scenarios passed.
 
-La validación del campo `name` no está funcionando
-de acuerdo con los requisitos documentados.
+The four negative scenarios failed because the API
+returned unexpected HTTP status codes.
 
-Esto permite almacenar nombres de kits con formatos
-no permitidos.
+### 9. Impact
 
-### 10. Entorno de pruebas
+Incorrect request validation may allow invalid kit
+creation requests to be accepted.
 
-- Sistema operativo: Windows
-- Lenguaje: Python 3.15
-- Framework: Pytest 9.2.0
-- Librería HTTP: Requests
-- Tipo de aplicación: API REST
-- Método HTTP: POST
+Additionally, returning HTTP 500 instead of HTTP 400
+for a missing required parameter exposes an incorrect
+error-handling behavior.
+
+This affects API reliability and compliance with
+the documented project requirements.
+
+### 10. Test Environment
+
+- Operating System: Windows 11
+- Programming Language: Python 3.15.0
+- Testing Framework: Pytest 9.2.0
+- HTTP Library: Requests
+- Application Type: REST API
+- HTTP Method: POST
+- Endpoint: /api/v1/kits

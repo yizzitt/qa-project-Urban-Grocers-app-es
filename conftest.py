@@ -1,4 +1,5 @@
 from datetime import datetime
+
 import pytest
 import data
 import sender_stand_request
@@ -13,7 +14,7 @@ def pytest_metadata(metadata):
         "Proyecto": "Urban Grocers API Testing",
         "Autor": "Freddy Ramirez",
         "Especialidad": "QA Automation",
-        "Lenguaje": "Python 3.15",
+        "Lenguaje": "Python",
         "Framework": "Pytest",
         "Libreria HTTP": "Requests",
         "Tipo de pruebas": "API REST",
@@ -29,7 +30,6 @@ def pytest_html_report_title(report):
 
 # FIXTURES
 
-
 @pytest.fixture
 def auth_token():
 
@@ -37,7 +37,7 @@ def auth_token():
 
     assert response.status_code == 201, (
         f"No se pudo crear el usuario. "
-        f"Código HTTP recibido: {response.status_code}"
+        f"Codigo HTTP recibido: {response.status_code}"
     )
 
     return response.json()["authToken"]
@@ -46,10 +46,7 @@ def auth_token():
 @pytest.fixture
 def create_kit(auth_token):
 
-    def _create_kit(kit_name):
-
-        kit_body = data.kit_body.copy()
-        kit_body["name"] = kit_name
+    def _create_kit(kit_body):
 
         return sender_stand_request.post_new_client_kit(
             auth_token,
